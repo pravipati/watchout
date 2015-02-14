@@ -18,6 +18,8 @@ var guyID = 0;
 var Guy = function(x, y, r) {
   this.x = x;
   this.y = y;
+  this.dx = 0;
+  this.dy = 0
   this.r = r;
   this.id = guyID++;
 };
@@ -67,6 +69,15 @@ var update = function () {
   setTimeout(update, 1000);
 };
 
+var drag = d3.behavior.drag()
+  .on("drag", function(d,i) {
+    d.dx += d3.event.dx;
+    d.dy += d3.event.dy;
+    d3.select(this).attr("transform", function(d,i){
+        return "translate("+ [ d.dx,d.dy ] + ")"
+    })
+  });
+
 
 //create function that generates transformations of badguys
 //array of transformation to every badguys x,y coords
@@ -96,6 +107,7 @@ board.selectAll('circle')
   .attr('r', function (d) { return d.r; })
   .attr('cx', function (d) { return d.x; })
   .attr('cy', function (d) { return d.y; })
-  .style('fill', function (d) {return d.color;});
+  .style('fill', function (d) {return d.color;})
+  .call(drag);
 
 update();
